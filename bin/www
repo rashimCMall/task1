@@ -7,41 +7,40 @@
 var app = require('../app');
 var debug = require('debug')('node-express:server');
 var http = require('http');
+var passport = require('passport');
 
 
 const Sequelize = require('sequelize');
 const sequelize = new Sequelize('postgres://postgres:admin1234@localhost:5432/sampledb');
-sequelize
 
+sequelize
 .authenticate()
 .then(() => {
   app.set('User',User);
   console.log('Connection has been established successfully.');
 })
-
 .catch(err => {
   console.error('Unable to connect to the database:', err);
 });
 
+
 //USER MODEL
 const User = sequelize.define('user', {
 
-    // attributes
-    firstName: {
-        type: Sequelize.STRING,
-        allowNull: false
-    },
-    
-    lastName: {
-        type: Sequelize.STRING
-        // allowNull defaults to true
-      }
-    
-    }, 
-    {
-        // options
-    });
+  username: {
+      type: Sequelize.STRING,
+      allowNull: false
+  },
+  
+  password: {
+      type: Sequelize.STRING,
+      allowNull: false
+    }
+  
+  }, 
+);
 
+require('../passport.js')(passport, User);
 /**
  * Get port from environment and store in Express.
  */
@@ -121,4 +120,3 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
-

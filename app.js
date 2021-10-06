@@ -4,10 +4,10 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const Sequelize = require('sequelize')
-
+var passport = require('passport');
 var indexRouter = require('./routes/index');
 var authRouter = require('./routes/auth');
-
+var session = require('express-session');
 var app = express();
 
 app.set("view engine", "pug");
@@ -17,9 +17,12 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(session({secret:'borkar.amol', saveUninitialized: false, resave:false}));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(express.static(path.join(__dirname, 'public')));
-
 app.use('/', indexRouter);
 app.use('/auth', authRouter);
 
@@ -33,10 +36,10 @@ app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
+  console.log(err);
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.send(err);
 });
 
 module.exports = app;
