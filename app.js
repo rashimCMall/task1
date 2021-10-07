@@ -3,7 +3,6 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-const Sequelize = require('sequelize')
 var passport = require('passport');
 var indexRouter = require('./routes/index');
 var authRouter = require('./routes/auth');
@@ -39,7 +38,7 @@ app.use(function(err, req, res, next) {
   console.log(err);
   // render the error page
   res.status(err.status || 500);
-  res.send(err);
+  return res.send(err);
 });
 
 module.exports = app;

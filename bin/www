@@ -1,46 +1,24 @@
 #!/usr/bin/env node
 
-/**
- * Module dependencies.
- */
-
 var app = require('../app');
 var debug = require('debug')('node-express:server');
 var http = require('http');
 var passport = require('passport');
+const { Client } = require('pg');
 
-
-const Sequelize = require('sequelize');
-const sequelize = new Sequelize('postgres://postgres:admin1234@localhost:5432/sampledb');
-
-sequelize
-.authenticate()
-.then(() => {
-  app.set('User',User);
-  console.log('Connection has been established successfully.');
-})
-.catch(err => {
-  console.error('Unable to connect to the database:', err);
+const client = new Client({
+    user: 'postgres',
+    host: 'localhost',
+    database: 'sampledb',
+    password: 'admin1234',
+    port: 5432,
 });
+client.connect();
+
+app.set('client', client);
+require('../passport.js')(passport, client);
 
 
-//USER MODEL
-const User = sequelize.define('user', {
-
-  username: {
-      type: Sequelize.STRING,
-      allowNull: false
-  },
-  
-  password: {
-      type: Sequelize.STRING,
-      allowNull: false
-    }
-  
-  }, 
-);
-
-require('../passport.js')(passport, User);
 /**
  * Get port from environment and store in Express.
  */
